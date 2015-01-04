@@ -302,59 +302,74 @@ ClrPal(i%, 0) = (47 - i%) * 20
 ClrPal(i%, 1) = 160
 ClrPal(i%, 2) = 0
 NEXT
-FOR i = 48 TO 51  'g - c
-ClrPal(i, 1) = 0
-ClrPal(i, 2) = 160
-ClrPal(i, 3) = (i - 48) * 20
+
+'48-51 green->cyan
+FOR i% = 48 TO 51
+ClrPal(i%, 0) = 0
+ClrPal(i%, 1) = 160
+ClrPal(i%, 2) = (i% - 48) * 20
 NEXT
-FOR i = 52 TO 55   'c - b
-ClrPal(i, 1) = 0
-ClrPal(i, 2) = (55 - i) * 20
-ClrPal(i, 3) = 160
+
+'52-55 cyan->blue
+FOR i% = 52 TO 55
+ClrPal(i%, 0) = 0
+ClrPal(i%, 1) = (55 - i%) * 20
+ClrPal(i%, 2) = 160
 NEXT
-'b shades
-FOR i = 56 TO 79
-FOR j = 1 TO 3
-ClrPal(i, j) = ClrPal(i - 24, j) + 40
-NEXT
-NEXT
-FOR i = 80 TO 103
-FOR j = 1 TO 3
-ClrPal(i, j) = ClrPal(i - 48, j) + 80
+
+'56-79 bright shades
+FOR i% = 56 TO 79
+FOR j% = 1 TO 3
+ClrPal(i%, j%) = ClrPal(i% - 24, j%) + 40
 NEXT
 NEXT
 
-'d shades
-FOR i = 104 TO 127
-FOR j = 1 TO 3
-ClrPal(i, j) = INT(ClrPal(i - 72, j) * .5)
-NEXT
-NEXT
-FOR i = 128 TO 151
-FOR j = 1 TO 3
-ClrPal(i, j) = INT(ClrPal(i - 72, j) * .5)
-NEXT
-NEXT
-FOR i = 152 TO 175
-FOR j = 1 TO 3
-ClrPal(i, j) = INT(ClrPal(i - 72, j) * .5)
+'80-103 bright shades
+FOR i% = 80 TO 103
+FOR j% = 1 TO 3
+ClrPal(i%, j%) = ClrPal(i% - 48, j%) + 80
 NEXT
 NEXT
 
-'dd shades
-FOR i = 176 TO 199
-FOR j = 1 TO 3
-ClrPal(i, j) = INT(ClrPal(i - 72, j) * .5)
+'104-127 dark shades
+FOR i% = 104 TO 127
+FOR j% = 1 TO 3
+ClrPal(i%, j%) = ClrPal(i% - 72, j%) \ 2
 NEXT
 NEXT
-FOR i = 200 TO 223
-FOR j = 1 TO 3
-ClrPal(i, j) = INT(ClrPal(i - 72, j) * .5)
+
+'128-151 dark shades
+FOR i% = 128 TO 151
+FOR j% = 1 TO 3
+ClrPal(i%, j%) = ClrPal(i% - 72, j%) \ 2
 NEXT
 NEXT
-FOR i = 224 TO 247
-FOR j = 1 TO 3
-ClrPal(i, j) = INT(ClrPal(i - 72, j) * .5)
+
+'152-175 dark shades
+FOR i% = 152 TO 175
+FOR j% = 1 TO 3
+ClrPal(i%, j%) = ClrPal(i% - 72, j%) \ 2
+NEXT
+NEXT
+
+'176-199 darker shades
+FOR i% = 176 TO 199
+FOR j% = 1 TO 3
+ClrPal(i%, j%) = ClrPal(i% - 72, j%) \ 2
+NEXT
+NEXT
+
+'200-223 darker shades
+FOR i% = 200 TO 223
+FOR j% = 1 TO 3
+ClrPal(i%, j%) = ClrPal(i% - 72, j%) \ 2
+NEXT
+NEXT
+
+'224-247 darker shades
+FOR i% = 224 TO 247
+FOR j% = 1 TO 3
+ClrPal(i%, j%) = ClrPal(i% - 72, j%) \ 2
 NEXT
 NEXT
 
