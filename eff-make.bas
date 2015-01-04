@@ -249,64 +249,58 @@ DEFSNG P
 SUB setPalette
 SHARED ClrPal() AS INTEGER
 
-FOR c% = 0 TO 7
+'0-7 standard colors
+FOR i% = 0 TO 7
+FOR j% = 0 TO 2
+ClrPal(i%, j%) = 127 * (i% AND (2 ^ j%))
+NEXT
+NEXT
 
-ClrPal(0, 1) = 0
-ClrPal(0, 2) = 0
-ClrPal(0, 3) = 0
-ClrPal(1, 1) = 0
-ClrPal(1, 2) = 0
-ClrPal(1, 3) = 127
-ClrPal(2, 1) = 0
-ClrPal(2, 2) = 127
-ClrPal(2, 3) = 0
-ClrPal(3, 1) = 0
-ClrPal(3, 2) = 127
-ClrPal(3, 3) = 127
-ClrPal(4, 1) = 127
-ClrPal(4, 2) = 0
-ClrPal(4, 3) = 0
-ClrPal(5, 1) = 127
-ClrPal(5, 2) = 0
-ClrPal(5, 3) = 127
-ClrPal(6, 1) = 127
-ClrPal(6, 2) = 127
-ClrPal(6, 3) = 0
-ClrPal(7, 1) = 127
-ClrPal(7, 2) = 127
-ClrPal(7, 3) = 127
-FOR i = 0 TO 7
-FOR j = 1 TO 3
-ClrPal(i + 8, j) = ClrPal(i, j) + 128
+'8-15 extended colors
+FOR i% = 0 TO 7
+FOR j% = 0 TO 2
+ClrPal(i% + 8, j%) = ClrPal(i%, j%) + 128
 NEXT
 NEXT
+
+'8 is darker
+ClrPal(8, 0) = 64
 ClrPal(8, 1) = 64
 ClrPal(8, 2) = 64
-ClrPal(8, 3) = 64
-FOR i = 16 TO 31   'black to white
-FOR j = 1 TO 3
-ClrPal(i, j) = 10 + (15 * (i - 16))
+
+'16-31 black->white
+FOR i% = 16 TO 31
+FOR j% = 0 TO 2
+ClrPal(i%, j%) = 10 + (15 * (i% - 16))
 NEXT
 NEXT
-FOR i = 32 TO 35   ' b - m
-ClrPal(i, 1) = (i - 32) * 20
-ClrPal(i, 2) = 0
-ClrPal(i, 3) = 160
+
+'32-35 blue->magenta
+FOR i% = 32 TO 35
+ClrPal(i%, 0) = (i% - 32) * 20
+ClrPal(i%, 1) = 0
+ClrPal(i%, 2) = 160
 NEXT
-FOR i = 36 TO 39   'm - r
-ClrPal(i, 1) = 160
-ClrPal(i, 2) = 0
-ClrPal(i, 3) = (39 - i) * 20
+
+'36-39 magenta->red
+FOR i% = 36 TO 39
+ClrPal(i%, 0) = 160
+ClrPal(i%, 1) = 0
+ClrPal(i%, 2) = (39 - i%) * 20
 NEXT
-FOR i = 40 TO 43  'r - y
-ClrPal(i, 1) = 160
-ClrPal(i, 2) = (i - 40) * 20
-ClrPal(i, 3) = 0
+
+'40-43 red->yellow
+FOR i% = 40 TO 43
+ClrPal(i%, 0) = 160
+ClrPal(i%, 1) = (i% - 40) * 20
+ClrPal(i%, 2) = 0
 NEXT
-FOR i = 44 TO 47  'y - g
-ClrPal(i, 1) = (47 - i) * 20
-ClrPal(i, 2) = 160
-ClrPal(i, 3) = 0
+
+'44-47 yellow->green
+FOR i% = 44 TO 47
+ClrPal(i%, 0) = (47 - i%) * 20
+ClrPal(i%, 1) = 160
+ClrPal(i%, 2) = 0
 NEXT
 FOR i = 48 TO 51  'g - c
 ClrPal(i, 1) = 0
