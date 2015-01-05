@@ -70,7 +70,7 @@ IF eff1Hdr.yres <> eff2Hdr.yres THEN throw "resolution does not match!"
 frames1% = eff1Hdr.frames
 frames2% = eff2Hdr.frames
 xres% = eff1Hdr.xres
-yres% = eff2Hdr.yres
+yres% = eff1Hdr.yres
 effDataOff& = 7
 
 'get output file
