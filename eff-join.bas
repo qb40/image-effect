@@ -1,95 +1,243 @@
-DECLARE FUNCTION nospc$ (s$)
-DECLARE FUNCTION crc (a AS INTEGER)
-DEFLNG L
-null$ = CHR$(0)
+'eff header
+TYPE EffHeader
+frames AS INTEGER
+xres AS INTEGER
+yres AS INTEGER
+END TYPE
 
+
+'float pixel
+TYPE FloatPixel
+r AS SINGLE
+g AS SINGLE
+b AS SINGLE
+END TYPE
+
+'int pixel
+TYPE IntPixel
+r AS INTEGER
+g AS INTEGER
+b AS INTEGER
+END TYPE
+
+
+'global variable
+COMMON SHARED ClrPal() AS IntPixel
+
+
+'procedure declaration
+DECLARE SUB throw (msg$)
+DECLARE SUB picPalette ()
+DECLARE SUB getPalette ()
+DECLARE SUB defPalette ()
+DECLARE FUNCTION bmpRowSize& (xres&)
+DECLARE FUNCTION addFileExt$ (file$, ext$)
+DECLARE FUNCTION paletteClr% (pix AS IntPixel)
+DECLARE SUB colorLevel (lvl AS FloatPixel, method$, frames%, fr%)
+
+
+'basic init
+OPTION BASE 0
+ON ERROR GOTO errs
+DIM ClrPal(256) AS IntPixel
+DIM eff1Hdr AS EffHeader
+DIM eff2Hdr AS EffHeader
 CLS
-INPUT "PIC file(common part)"; f1$
-INPUT "Range start"; r1
-INPUT "Range end"; r2
-INPUT "WMP file"; f2$
-f2$ = f2$ + ".wmp"
 
-PRINT "Reading . . ."
-OPEN "B", #1, nospc$(f1$ + STR$(r1) + ".pic")
-SEEK #1, 1
-xx$ = INPUT$(2, #1)
-SEEK #1, 3
-yy$ = INPUT$(2, #1)
-CLOSE #1
-OPEN "B", #1, f2$
-ss = ABS(r2 - r1) + 1
-ss1 = crc(ss - 255)
-ss2 = ss - ss1
-wrt$ = CHR$(ss1) + CHR$(ss2)
-SEEK #1, 1
-PUT #1, 1, wrt$
-wrt$ = xx$ + yy$
-SEEK #1, 3
-PUT #1, 3, wrt$
-ps = 7
-lx = ASC(LEFT$(xx$, 1)) + ASC(RIGHT$(xx$, 1))
-ly = ASC(LEFT$(yy$, 1)) + ASC(RIGHT$(yy$, 1))
-lll = lx * ly + 4
-PRINT "Joining PIC files into WMP file . . ."
-FOR i = r1 TO r2 STEP SGN(r2 - r1)
-OPEN "B", #2, nospc$(f1$ + STR$(i) + ".pic")
-        FOR j = 5 TO LOF(2)'lll
-        SEEK #2, j
-        read$ = INPUT$(1, #2)
-        SEEK #1, ps
-        PUT #1, ps, read$
-        ps = ps + 1
-        NEXT
-CLOSE #2
-NEXT
-PRINT "Done."
-PRINT ""
 
+'get eff files
+PRINT "EFF-JOIN"
+PRINT "--------"
+PRINT
+INPUT "Img-Effect file-1"; fsrc1$
+fsrc1$ = addFileExt$(fsrc1$, ".eff")
+INPUT "Img-Effect file-2"; fsrc2$
+fsrc2$ = addFileExt$(fsrc2$, ".eff")
+
+
+'get eff headers
+OPEN "B", #1, fsrc1$
+GET #1, , eff1Hdr
+OPEN "B", #2, fsrc2$
+GET #2, , eff2Hdr
+CLOSE #1, #2
+
+'check if valid
+IF eff1Hdr.xres <> eff2Hdr.xres THEN throw "resolution does not match!"
+IF eff1Hdr.yres <> eff2Hdr.yres THEN throw "resolution does not match!"
+
+'get eff info
+frames1% = eff1Hdr.frames
+frames2% = eff2Hdr.frames
+xres% = eff1Hdr.xres
+yres% = eff2Hdr.yres
+effDataOff& = 7
+
+'get output file
+INPUT "Output file"; fdst$
+fdst$ = addFileExt$(fdst$, ".eff")
+
+'save details to eff file
+OPEN "B", #3, fdst$
+frames% = frames1% + frames2%
+PUT #3, , frames%
+PUT #3, , xres%
+PUT #3, , yres%
+
+'init
 SCREEN 13
+getPalette
+picPalette
+DIM dclr AS STRING * 1
+OPEN "B", #1, fsrc1$
+OPEN "B", #2, fsrc2$
+SEEK #1, effDataOff&
+SEEK #2, effDataOff&
 
-'check
-INPUT "Movie file name"; ff$
-INPUT "Time gap"; t
+'merge and display frames
+FOR fr% = 1 TO frames%
 
-OPEN "B", #3, ff$ + ".wmp"
-SEEK #3, 1
-read$ = INPUT$(2, #3)
-ss = ASC(LEFT$(read$, 1)) + ASC(RIGHT$(read$, 1))
+'get the rows
+FOR y% = 0 TO yres% - 1
 
-SEEK #3, 3
-read$ = INPUT$(2, #3)
-xx = ASC(LEFT$(read$, 1)) + ASC(RIGHT$(read$, 1))
-SEEK #3, 5
-read$ = INPUT$(2, #3)
-yy = ASC(LEFT$(read$, 1)) + ASC(RIGHT$(read$, 1))
+'get the columns
+FOR x% = 0 TO xres% - 1
 
-CLS
-SCREEN 13
+IF fr% <= frames1% THEN GET #1, , dclr ELSE GET #2, , dclr
+clr% = ASC(dclr)
 
-FOR i = 1 TO ss
-FOR y = yy TO 0 STEP -1
-FOR x = 0 TO xx
-cl = ASC(INPUT$(1, #3) + null$)
-LINE (x, y)-(x, y), cl
-NEXT
-NEXT
-BEEP'SOUND 21000, t
+'write the pixel
+PSET (x%, yres% - 1 - y%), clr%
+PUT #3, , dclr
+
 NEXT
 
-CLOSE #3
+NEXT
+
+NEXT
+
+'end
+CLOSE #1, #2, #3
+SCREEN 1
+defPalette
+PRINT "Press a key to exit"
+k$ = INPUT$(1)
 SYSTEM
 
-DEFSNG L
-FUNCTION crc (a AS INTEGER)
-IF (a < 0) THEN crc = 0 ELSE crc = a
+
+' error handler
+errs:
+throw "Unknown!"
+RESUME NEXT
+
+FUNCTION addFileExt$ (file$, ext$)
+IF RIGHT$(file$, LEN(ext$)) = ext$ THEN addFileExt$ = file$ ELSE addFileExt$ = file$ + ext$
 END FUNCTION
 
-FUNCTION nospc$ (s$)
-FOR i = 1 TO LEN(s$)
-d$ = MID$(s$, i, 1)
-IF (d$ <> " ") THEN b$ = b$ + d$
-NEXT
-nospc$ = b$
+FUNCTION bmpRowSize& (xres&)
+ans& = 3 * xres&
+occupy& = ans& MOD 4
+IF occupy& > 0 THEN occupy& = 4 - occupy&
+bmpRowSize& = ans& + occupy&
 END FUNCTION
+
+SUB colorLevel (lvl AS FloatPixel, method$, frames%, fr%)
+
+SELECT CASE method$
+CASE "db"
+lvl.r = fr%
+lvl.g = fr%
+lvl.b = fr%
+CASE "bd"
+lvl.r = frames% - fr%
+lvl.g = frames% - fr%
+lvl.b = frames% - fr%
+CASE "r1"
+lvl.r = fr%
+lvl.g = 0
+lvl.b = 0
+CASE "r2"
+lvl.r = frames% - fr%
+lvl.g = 0
+lvl.b = 0
+CASE "g1"
+lvl.r = 0
+lvl.g = fr%
+lvl.b = 0
+CASE "g2"
+lvl.r = 0
+lvl.g = frames% - fr%
+lvl.b = 0
+CASE "b1"
+lvl.r = 0
+lvl.g = 0
+lvl.b = fr%
+CASE "b2"
+lvl.r = 0
+lvl.g = 0
+lvl.b = frames% - fr%
+CASE ELSE
+END SELECT
+lvl.r = lvl.r / frames%
+lvl.g = lvl.g / frames%
+lvl.b = lvl.b / frames%
+
+END SUB
+
+SUB defPalette
+SHARED ClrPal() AS IntPixel
+
+OUT &H3C8, 0
+FOR clr% = 0 TO 255
+OUT &H3C9, ClrPal(clr%).r
+OUT &H3C9, ClrPal(clr%).g
+OUT &H3C9, ClrPal(clr%).b
+NEXT
+
+END SUB
+
+SUB getPalette
+SHARED ClrPal() AS IntPixel
+
+FOR clr% = 0 TO 255
+OUT &H3C7, clr%
+ClrPal(clr%).r = INP(&H3C9)
+ClrPal(clr%).g = INP(&H3C9)
+ClrPal(clr%).b = INP(&H3C9)
+NEXT
+
+END SUB
+
+FUNCTION paletteClr% (pix AS IntPixel)
+
+r% = pix.r \ 64
+g% = pix.g \ 32
+b% = pix.b \ 32
+paletteClr% = r% * 64 + g% * 8 + b%
+
+END FUNCTION
+
+SUB picPalette
+
+'color palette = rrgggbbb
+OUT &H3C8, 0
+FOR clr% = 0 TO 255
+OUT &H3C9, (clr% \ 64) * 16        'red
+OUT &H3C9, ((clr% \ 8) AND 7) * 8  'green
+OUT &H3C9, (clr% AND 7) * 8        'blue
+NEXT
+
+END SUB
+
+SUB throw (msg$)
+
+SCREEN 1
+defPalette
+COLOR 15
+PRINT "ERROR: "; msg$
+PRINT "Press any key to exit ..."
+k$ = INPUT$(1)
+SYSTEM
+
+END SUB
 

@@ -61,12 +61,13 @@ OPTION BASE 0
 ON ERROR GOTO errs
 DIM ClrPal(256) AS IntPixel
 DIM bmpHdr AS BmpHeader
-DIM pixel AS BmpPixel
-null$ = CHR$(0)
 CLS
 
 
 'get bmp file
+PRINT "EFF-MAKE"
+PRINT "--------"
+PRINT
 INPUT "Bitamp file"; fsrc$
 fsrc$ = addFileExt$(fsrc$, ".bmp")
 
