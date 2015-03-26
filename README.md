@@ -4,18 +4,17 @@ It can used for displaying logo in dos games / software. Alternatively, it can b
 add ui animations in dos. It uses `rrgggbbb` color palette format for displaying images,
 and only 24-bit bitmap images are supported. The file format of `.eff` file is:
 
+```
+[frames] <integer>
+[xres]   <integer>
+[yres]   <integer>
 
-`[frames]<integer>`
-`[xres]<integer>`
-`[yres]<integer>`
-
-*frame*
-`[byte color values]<xres * yres bytes>`
-
-*frame*
-`[byte color values]<xres * yres bytes>`
-
-`...`
+frame
+[byte color values]<xres * yres bytes>
+frame
+[byte color values]<xres * yres bytes>
+...
+```
 
 
 ##demo
