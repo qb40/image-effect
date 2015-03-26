@@ -4,15 +4,14 @@ It can used for displaying logo in dos games / software. Alternatively, it can b
 add ui animations in dos. It uses `rrgggbbb` color palette format for displaying images,
 and only 24-bit bitmap images are supported. The file format of `.eff` file is:
 
-```
-[frames] <integer>
-[xres]   <integer>
-[yres]   <integer>
-
-frame
-[byte color values]<xres * yres bytes>
-frame
-[byte color values]<xres * yres bytes>
+```basic
+header {
+  frames as integer
+  xres   as integer
+  yres   as integer
+}
+frame { color-value as xres * yres bytes }
+frame { color-value as xres * yres bytes }
 ...
 ```
 
@@ -30,9 +29,9 @@ Start `eff-make.exe` to create an image effect.
 
 
 <img src="/assets/img/2.png" width="70%"><br/>
-`Bitmap file` is the image whose effect is required.
-`Output file` is the resulting image effect file.
-`Frames` determines the length of the animation.
+`Bitmap file` is the image whose effect is required.<br/>
+`Output file` is the resulting image effect file.<br/>
+`Frames` determines the length of the animation.<br/>
 `Method` tells the effect to be used.
 <br/><br/>
 
@@ -62,8 +61,8 @@ Start `eff-join.exe` to join two image effects.
 
 
 <img src="/assets/img/11.png" width="70%"><br/>
-`Img-effect file-1` is the first effect file.
-`Img-effect file-2` is the second effect file.
+`Img-effect file-1` is the first effect file.<br/>
+`Img-effect file-2` is the second effect file.<br/>
 `Output file` is the combined effect file.
 <br/><br/>
 
