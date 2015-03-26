@@ -10,8 +10,8 @@ header {
   xres   as integer
   yres   as integer
 }
-frame { color-value as xres * yres bytes }
-frame { color-value as xres * yres bytes }
+frame { color-value as xres * yres byte }
+frame { color-value as xres * yres byte }
 ...
 ```
 
