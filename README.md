@@ -1,5 +1,5 @@
-#qb-img-effect
-**qb-img-effect** is a dos tool that can be used to create an animation out of an image.
+#qb-image-effect
+**qb-image-effect** is a dos tool that can be used to create an animation out of an image.
 It can used for displaying logo in dos games / software. Alternatively, it can be used to
 add ui animations in dos. It uses `rrgggbbb` color palette format for displaying images,
 and only 24-bit bitmap images are supported. The file format of `.eff` file is:
