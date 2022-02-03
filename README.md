@@ -3,6 +3,8 @@ It can used for displaying logo in dos games / software. Alternatively, it can b
 add ui animations in dos. It uses `rrgggbbb` color palette format for displaying images,
 and only 24-bit bitmap images are supported. The file format of `.eff` file is:
 
+<br>
+
 ```vb
 header {
   frames as integer
@@ -14,8 +16,7 @@ frame { color-value as xres*yres byte }
 ...
 ```
 
-
-## demo
+<br>
 
 <img src="https://raw.githubusercontent.com/qb40/imageeffect/gh-pages/0/image/0.png"><br/>
 Start `eff-make.exe` to create an image effect.
